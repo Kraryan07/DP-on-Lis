@@ -1,0 +1,41 @@
+// User function Template for C++
+class Solution {
+  public:
+//   #define ll long long;
+   int findmax(int i,int j,int istrue,string &s,vector<vector<vector<int>>>&dp){
+    //   if(i>j) return 0;
+       if(dp[i][j][istrue]!=-1) return dp[i][j][istrue];
+       if(i==j){
+           if(istrue) return s[i]=='T';
+           else return s[i]=='F';
+       }
+       
+       int cost=0;
+       for(int k=i+1;k<=j-1;k+=2){
+           int lt=findmax(i,k-1,1,s,dp);
+           int lf=findmax(i,k-1,0,s,dp);
+           int rt=findmax(k+1,j,1,s,dp);
+           int rf=findmax(k+1,j,0,s,dp);
+           
+           if(s[k]=='|'){
+               if(istrue) cost+=(lt*rt)+(rt*lf)+(rf*lt);
+               else cost+=(lf*rf);
+           }
+           else if(s[k]=='&'){
+               if(istrue) cost+=(rt*lt);
+               else cost+=(rf*lf)+(lf*rt)+(lt*rf);
+           }
+           else if(s[k]=='^'){
+               if(istrue) cost+=(rt*lf)+(lt*rf);
+               else cost+=(rt*lt)+(lf*rf);
+           }
+       }
+       return dp[i][j][istrue]=cost;
+   }
+    int countWays(string &s) {
+        // code here
+        int n=s.size();
+        vector<vector<vector<int>>>dp(n,vector<vector<int>>(n,vector<int>(2,-1)));
+        return findmax(0,n-1,1,s,dp);
+    }
+};
